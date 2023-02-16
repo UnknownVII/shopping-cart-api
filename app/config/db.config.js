@@ -14,7 +14,7 @@ module.exports = () => {
   })
     .then(() => {
       console.log(
-        "[Finished] Connection estabislished with MongoDB Successfully"
+        "[Finished] Connection established with MongoDB Successfully"
       );
       //CREATE AND ASSIGN TOKEN
       // const token = jwt.sign( "tempID" ,

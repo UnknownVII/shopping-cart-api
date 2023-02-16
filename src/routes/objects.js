@@ -2,6 +2,12 @@ const router = require("express").Router();
 const Objects = require("../../models/object");
 const verify = require("../../app/verify-token");
 
+const fs = require("fs");
+
+const multer = require("multer");
+const multerStorage = multer.memoryStorage();
+const upload = multer({ storage: multerStorage });
+
 const { objectValidation } = require("../../app/validate");
 
 //GET ALL OBJECTS with Query of limit and page
@@ -10,9 +16,9 @@ router.get("/all-objects", verify, async (req, res) => {
   const limitData = parseInt(limit);
   const skip = (page - 1) * limit;
   try {
-    const students = await Objects.find().limit(limitData).skip(skip);
-    if (students != 0) {
-      res.json({ students });
+    const products = await Objects.find().limit(limitData).skip(skip);
+    if (products != 0) {
+      res.json({ products });
     } else {
       return res.status(400).json({ error: "DB is empty" });
     }
@@ -22,40 +28,48 @@ router.get("/all-objects", verify, async (req, res) => {
 });
 
 //CREATE NEW OBJECT
-router.post("/new", verify, async (req, res) => {
-  //VALIDATION OF DATA
-  const { error } = objectValidation(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+router.post(
+  "/new",
+  upload.single("product_image"),
+  verify,
+  async (req, res) => {
+    //VALIDATION OF DATA
+    const { error } = objectValidation(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
 
-  //CHECK IF OBJECT ALREADY EXIST
-  const objectExists = await Objects.findOne({
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-  });
-  if (objectExists)
-    return res.status(400).json({ error: "Object Already Exists" });
+    //CHECK IF OBJECT ALREADY EXIST
+    const objectExists = await Objects.findOne({
+      product_name: req.body.product_name,
+    });
+    if (objectExists)
+      return res.status(400).json({ error: "Object Already Exists" });
 
-  //CREATING CONTACT
-  var color = generateDarkColorHex();
-  const object = new Objects({
-    color: `${color}`,
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    age: req.body.age,
-    course: req.body.course,
-    year_level: req.body.year_level,
-    subjects: req.body.subjects,
-  });
-  try {
-    const savedUser = await object.save();
-    res.send(savedUser);
-  } catch (err) {
-    res.status(400).send(err);
+    //CREATING CONTACT
+    // const buffer = new Buffer.from(req.file.buffer,'base64');
+    // const image = { data: buffer.toString('base64'), contentType: req.file.mimetype }
+    // encryptedBytes.toString('base64');  your base64 string
+
+    const encoded = Buffer.from(req.file.buffer, 'base64');
+    console.log(encoded);
+    const encryptedBytes = {data: encoded, contentType: req.file.mimetype};
+
+    const object = new Objects({
+      product_name: req.body.product_name,
+      product_image: encryptedBytes,
+      product_description: req.body.product_description,
+      product_price: req.body.product_price,
+    });
+
+    try {
+      const savedUser = await object.save();
+      res.send(savedUser);
+    } catch (err) {
+      res.status(400).send(err);
+    }
   }
-});
+);
 
 //DELETE SPECIFIC OBJECTS
-
 router.delete("/delete/:id", verify, async (req, res) => {
   const result = await Objects.findByIdAndDelete({
     _id: req.params.id,
@@ -117,14 +131,5 @@ router.patch("/update/:id", verify, async (req, res) => {
     res.status(400).json({ error: err });
   }
 });
-
-function generateDarkColorHex() {
-  let color = "#";
-  for (let i = 0; i < 3; i++)
-    color += (
-      "0" + Math.floor((Math.random() * Math.pow(16, 2)) / 2).toString(16)
-    ).slice(-2);
-  return color;
-}
 
 module.exports = router;

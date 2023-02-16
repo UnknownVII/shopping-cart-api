@@ -22,12 +22,9 @@ const loginValidation = (data) => {
 //OBJECT VALIDATION
 const objectValidation = (data) => {
   const schema = Joi.object({
-    first_name: Joi.string().required(),
-    last_name: Joi.string().required(),
-    age: Joi.string().required(),
-    course: Joi.string().required(),
-    year_level: Joi.string().required(),
-    subjects: Joi.array().items(Joi.string().min(3)).required(),
+    product_name: Joi.string().required(),
+    product_description: Joi.string().required(),
+    product_price: Joi.string().required(),
   });
   return schema.validate(data);
 };

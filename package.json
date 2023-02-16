@@ -28,8 +28,11 @@
     "dotenv": "^16.0.3",
     "ejs": "^3.1.8",
     "express": "^4.18.2",
-    "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.6.7"
+    "gridfs-stream": "^1.1.1",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^6.6.7",
+    "multer": "^1.3.0",
+    "multer-gridfs-storage": "^5.0.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
