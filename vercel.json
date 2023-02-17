@@ -2,9 +2,9 @@
     "version": 1,
     "name": "shopping-cart-api",
     "builds": [
-       { "src": "app.js", "use": "@vercel/node" }
+       { "src": "server.js", "use": "@vercel/node" }
     ],
     "routes": [
-       { "src": "/(.*)", "dest": "/app.js" }
+       { "src": "/(.*)", "dest": "/server.js" }
     ]
  }
