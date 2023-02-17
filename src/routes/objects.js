@@ -48,11 +48,11 @@ router.post(
     // const buffer = new Buffer.from(req.file.buffer,'base64');
     // const image = { data: buffer.toString('base64'), contentType: req.file.mimetype }
     // encryptedBytes.toString('base64');  your base64 string
-
+    let object;
     try {
       const encoded = Buffer.from(req.file.buffer, 'base64');
       const encryptedBytes = {data: encoded, contentType: req.file.mimetype};
-      const object = new Objects({
+      object = new Objects({
         product_name: req.body.product_name,
         product_image: encryptedBytes,
         product_description: req.body.product_description,
