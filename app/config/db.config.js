@@ -1,6 +1,5 @@
 const { connect, connection } = require("mongoose");
 const { config } = require("dotenv");
-const jwt = require('jsonwebtoken');
 
 module.exports = () => {
   config();
@@ -10,19 +9,11 @@ module.exports = () => {
     dbName,
     user: process.env.DB_USER || "",
     pass: process.env.DB_PASSWORD || "",
-    
   })
     .then(() => {
       console.log(
         "[Finished] Connection established with MongoDB Successfully"
       );
-      //CREATE AND ASSIGN TOKEN
-      // const token = jwt.sign( "tempID" ,
-      //   process.env.TOKEN_SECRET
-      // );
-      // console.log(
-      //   "[Token   ]", token
-      // );
     })
     .catch((error) => console.error(error.message));
 

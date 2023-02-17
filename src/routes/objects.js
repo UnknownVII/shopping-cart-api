@@ -2,8 +2,6 @@ const router = require("express").Router();
 const Objects = require("../../models/object");
 const verify = require("../../app/verify-token");
 
-const fs = require("fs");
-
 const multer = require("multer");
 const multerStorage = multer.memoryStorage();
 const upload = multer({ storage: multerStorage });
@@ -23,7 +21,7 @@ router.get("/all-objects", verify, async (req, res) => {
       return res.status(400).json({ error: "DB is empty" });
     }
   } catch (err) {
-    res.status(400).json({ message: err });
+    res.status(400).json({ error: `${err}` });
   }
 });
 
@@ -41,17 +39,15 @@ router.post(
     const objectExists = await Objects.findOne({
       product_name: req.body.product_name,
     });
-    if (objectExists)
+    if (objectExists) {
       return res.status(400).json({ error: "Object Already Exists" });
+    }
 
     //CREATING CONTACT
-    // const buffer = new Buffer.from(req.file.buffer,'base64');
-    // const image = { data: buffer.toString('base64'), contentType: req.file.mimetype }
-    // encryptedBytes.toString('base64');  your base64 string
     let object;
     try {
-      const encoded = Buffer.from(req.file.buffer, 'base64');
-      const encryptedBytes = {data: encoded, contentType: req.file.mimetype};
+      const encoded = Buffer.from(req.file.buffer, "base64");
+      const encryptedBytes = { data: encoded, contentType: req.file.mimetype };
       object = new Objects({
         product_name: req.body.product_name,
         product_image: encryptedBytes,
@@ -59,14 +55,13 @@ router.post(
         product_price: req.body.product_price,
       });
     } catch (err) {
-      return res.status(400).json({ error: `${err}`});
+      return res.status(400).json({ error: `${err}` });
     }
-
     try {
       const savedUser = await object.save();
       res.send(savedUser);
     } catch (err) {
-      res.status(400).send(err);
+      res.status(400).json({ error: `${err}` });
     }
   }
 );
