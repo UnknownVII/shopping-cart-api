@@ -49,16 +49,18 @@ router.post(
     // const image = { data: buffer.toString('base64'), contentType: req.file.mimetype }
     // encryptedBytes.toString('base64');  your base64 string
 
-    const encoded = Buffer.from(req.file.buffer, 'base64');
-    console.log(encoded);
-    const encryptedBytes = {data: encoded, contentType: req.file.mimetype};
-
-    const object = new Objects({
-      product_name: req.body.product_name,
-      product_image: encryptedBytes,
-      product_description: req.body.product_description,
-      product_price: req.body.product_price,
-    });
+    try {
+      const encoded = Buffer.from(req.file.buffer, 'base64');
+      const encryptedBytes = {data: encoded, contentType: req.file.mimetype};
+      const object = new Objects({
+        product_name: req.body.product_name,
+        product_image: encryptedBytes,
+        product_description: req.body.product_description,
+        product_price: req.body.product_price,
+      });
+    } catch (err) {
+      return res.status(400).json({ error: `${err}`});
+    }
 
     try {
       const savedUser = await object.save();
